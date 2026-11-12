@@ -149,7 +149,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .tags span{font:12px 'JetBrains Mono',monospace;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--muted)}
 
-.featured{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;border:2px solid var(--acc);border-radius:22px;padding:28px;background:var(--card);margin-bottom:22px;position:relative;overflow:hidden}
+.featured{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;border:2px solid var(--acc);border-radius:22px;padding:28px;background:var(--card);margin-bottom:0;position:relative;overflow:hidden}
 .ftag{display:inline-block;background:var(--acc);color:var(--onacc);font:700 12px 'JetBrains Mono',monospace;padding:4px 10px;border-radius:6px;margin-bottom:12px;letter-spacing:.05em}
 .featured h3{font:800 clamp(30px,4vw,44px)/1 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.03em}
 .featured p{color:var(--muted);margin:12px 0}
@@ -377,8 +377,16 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted)}
 
  <section id="projects" class="reveal"><div class="container">
   <div class="sh"><h2 class="disp">Projects</h2><i></i></div>
-  <p class="note">My own product first, then client platforms. Filter by technology and open a project for details.</p>
+  <p class="note">Client platforms first, then my own product. Filter by technology and open a project for details.</p>
 
+  
+
+  <dialog id="lb" aria-label="Screenshot"><div class="lbw"><button class="icon lbx" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img id="lbImg" alt=""><p id="lbCap"></p></div></dialog>
+
+  <div class="tabs" role="group" aria-label="Filter projects by technology" id="filters"></div>
+  <div class="plist" id="plist"></div>
+
+  <p class="cap" style="margin:40px 0 12px">// Personal product</p>
   <article class="featured">
    <div class="fhead">
     <span class="ftag">FEATURED · PERSONAL PRODUCT</span>
@@ -404,11 +412,6 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted)}
    </div>
    <p class="hint" style="grid-column:1/-1;margin:0">Tap a screenshot to view it full size.</p>
   </article>
-
-  <dialog id="lb" aria-label="Screenshot"><div class="lbw"><button class="icon lbx" id="lbClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button><img id="lbImg" alt=""><p id="lbCap"></p></div></dialog>
-
-  <div class="tabs" role="group" aria-label="Filter projects by technology" id="filters"></div>
-  <div class="plist" id="plist"></div>
  </div></section>
 
  <section id="education" class="reveal"><div class="container">
@@ -468,8 +471,8 @@ var skillGroups=[
  {label:'Tools',skills:[['Git',['compass','mitrah']],['Azure DevOps',['compass']],['IIS',['compass']],['Postman',['compass']],['Swagger / OpenAPI',['compass']],['Serilog / Seq',['mitrah','compass']],['Agile / Scrum',['compass']],['GitHub Copilot, Claude, Cursor',['compass','vomnix']]]}
 ];
 var projects=[
- {id:'rta',title:'RTA – Driver Management System',year:'Dubai',stack:'Angular · .NET',tags:['Angular','.NET','Microservices','Government'],summary:'A driver management system covering accommodation, test scheduling and identity processing.',points:['E-test, psychometric evaluation and health test workflows','Emirates ID processing','Microservices-based ASP.NET Core backend'],tools:'Angular, ASP.NET Core Web API, Microservices'},
  {id:'sharjah',title:'Sharjah Municipality – Healthcare Platform',year:'UAE',stack:'.NET · SQL',tags:['Angular','.NET','Healthcare','Government'],summary:'A government healthcare platform managing multiple medical centers and patient workflows.',points:['Configurable services: laboratory, vaccination, X-ray','Role-based internal operations','Multi-center management'],tools:'ASP.NET Core Web API, Angular, SQL Server'},
+ {id:'rta',title:'RTA – Driver Management System',year:'Dubai',stack:'Angular · .NET',tags:['Angular','.NET','Microservices','Government'],summary:'A driver management system covering accommodation, test scheduling and identity processing.',points:['E-test, psychometric evaluation and health test workflows','Emirates ID processing','Microservices-based ASP.NET Core backend'],tools:'Angular, ASP.NET Core Web API, Microservices'},
  {id:'ev',title:'EV Connect – Real Estate Portal',year:'Dubai',stack:'Zoho CRM',tags:['Angular','.NET','Microservices'],summary:'A real estate portal for customers, developers, brokers and internal users.',points:['Property data, sales and reporting','Two-way sync with Zoho CRM REST APIs','Microservices backend'],tools:'ASP.NET Core Web API, Microservices, Angular, Zoho CRM API'},
  {id:'fleet',title:'Fleet Management System',year:'India',stack:'Angular · .NET',tags:['Angular','.NET'],summary:'A delivery management system connecting customers, the company and drivers.',points:['Route planning','Bulk order booking','Delivery tracking'],tools:'Angular, ASP.NET Core Web API'}
 ];
@@ -517,7 +520,7 @@ document.getElementById('dlgClose').onclick=function(){dlg.close()};
 dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
 
 // projects
-var fEl=document.getElementById('filters'),pl=document.getElementById('plist'),tag='All',open='rta';
+var fEl=document.getElementById('filters'),pl=document.getElementById('plist'),tag='All',open='sharjah';
 filters.forEach(function(f){var b=el('button',{class:'tab','aria-pressed':f===tag},esc(f));b.onclick=function(){tag=f;fEl.querySelectorAll('.tab').forEach(function(x){x.setAttribute('aria-pressed',x.textContent===f)});renderP()};fEl.appendChild(b)});
 function renderP(){pl.innerHTML='';var ls=projects.filter(function(p){return tag==='All'||p.tags.indexOf(tag)>-1});
  if(!ls.length){pl.appendChild(el('p',{class:'empty'},'No client project uses '+esc(tag)+' yet.'));return}

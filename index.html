@@ -276,7 +276,7 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted)}
    <p class="lead fade" style="animation-delay:.35s">I'm <strong>Veeranan M</strong>, and I build secure web apps with <strong>ASP.NET Core and Angular</strong> for government, healthcare and real estate clients across the UAE. 3.5+ years of work, from database schema to the last pixel.</p>
    <div class="ctas fade" style="animation-delay:.5s">
     <a href="#projects" class="btn fill">View projects <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
-    <a href="Veeranan_M_CV.pdf" class="btn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download CV</a>
+    <a href="Veeranan_M_CV.pdf" class="btn" download="Veeranan_M_CV.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download CV</a>
    </div>
   </div>
   <div class="art fade" style="animation-delay:.3s" aria-hidden="true">
@@ -449,6 +449,7 @@ footer{border-top:1px solid var(--line);padding:30px 0;color:var(--muted)}
 
 <script>
 var EMAIL='mveeranan63@gmail.com';
+var WEB3FORMS_KEY=''; // paste your Web3Forms access key here
 var places={
  compass:{kind:'Job',year:'2024–now',title:'Compass International LLC',note:'Government, healthcare and real estate platforms in Dubai.'},
  mitrah:{kind:'Job',year:'2023',title:'MitrahSoft Solutions',note:'REST APIs, schemas and Angular screens.'},
@@ -535,9 +536,19 @@ form.addEventListener('submit',function(ev){ev.preventDefault();
  if(v.message.length<10)errs.message='Write at least 10 characters.';
  ['name','email','message'].forEach(function(k){var i=document.getElementById(k),er=document.getElementById(k+'-err');if(errs[k]){i.setAttribute('aria-invalid','true');i.setAttribute('aria-describedby',k+'-err');er.textContent=errs[k];er.hidden=false}else{i.removeAttribute('aria-invalid');er.hidden=true}});
  var first=Object.keys(errs)[0];if(first){document.getElementById(first).focus();return}
- var su=encodeURIComponent('Portfolio message from '+v.name),body=encodeURIComponent(v.message+'\n\nFrom: '+v.name+' ('+v.email+')');
- var ok=document.getElementById('formOk');ok.hidden=false;
- ok.innerHTML='Almost done. <a href="https://mail.google.com/mail/?view=cm&to='+EMAIL+'&su='+su+'&body='+body+'" target="_blank" rel="noopener">Open in Gmail</a> or <a href="mailto:'+EMAIL+'?subject='+su+'&body='+body+'">your mail app</a> and press send. You can also email '+EMAIL+' directly.';
+ var ok=document.getElementById('formOk'),btn=form.querySelector('button');
+ var su='Portfolio message from '+v.name;
+ if(!WEB3FORMS_KEY){
+  location.href='mailto:'+EMAIL+'?subject='+encodeURIComponent(su)+'&body='+encodeURIComponent(v.message+'\n\nFrom: '+v.name+' ('+v.email+')');
+  ok.hidden=false;ok.textContent='Your mail app should open with the message ready. Press send there, or email '+EMAIL+' directly.';return;
+ }
+ btn.disabled=true;btn.style.opacity=.6;ok.hidden=true;
+ fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({access_key:WEB3FORMS_KEY,subject:su,from_name:v.name,name:v.name,email:v.email,message:v.message,botcheck:''})})
+ .then(function(r){return r.json()}).then(function(out){
+  if(!out.success)throw new Error(out.message);
+  form.reset();ok.hidden=false;ok.textContent='Message sent. Thank you, I will reply soon.';
+ }).catch(function(){ok.hidden=false;ok.textContent='Could not send right now. Please email '+EMAIL+' directly.'})
+ .finally(function(){btn.disabled=false;btn.style.opacity=1});
 });
 var lb=document.getElementById('lb');
 document.querySelectorAll('.shot').forEach(function(b){b.onclick=function(){document.getElementById('lbImg').src=b.dataset.src;document.getElementById('lbImg').alt=b.querySelector('img').alt;document.getElementById('lbCap').textContent=b.dataset.cap;try{lb.showModal()}catch(e){lb.setAttribute('open','')}}});
